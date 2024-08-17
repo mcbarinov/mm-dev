@@ -43,7 +43,7 @@ struct InstallCmd {
 fn main() {
     match Cli::parse().command {
         Command::List => shell("uv pip list"),
-        Command::ListOutdated => shell("pip list -o"),
+        Command::ListOutdated => shell("pip3 list -o"),
         Command::Install(cmd) => {
             if env::var_os("VIRTUAL_ENV").is_none() {
                 exit("venv is not activated")
