@@ -42,6 +42,10 @@ enum Command {
     /// delete tag and push: git tag -d $version && git push origin :refs/tags/$version
     #[command(alias = "dt")]
     DeleteTag(DeleteTagCmd),
+
+    /// amend the last commit: git add . && git commit --amend --no-edit && git push --force
+    #[command(alias = "amend")]
+    Amend,
 }
 
 #[derive(Parser)]
@@ -79,5 +83,6 @@ fn main() {
         Command::DeleteTag(cmd) => {
             shell(&format!("git tag -d '{version}' && git push origin :refs/tags/{version}", version = cmd.version))
         }
+        Command::Amend => shell("git add . && git commit --amend --no-edit && git push --force"),
     }
 }
