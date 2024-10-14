@@ -46,6 +46,9 @@ enum Command {
     /// amend the last commit: git add . && git commit --amend --no-edit && git push --force
     #[command(alias = "amend")]
     Amend,
+
+    /// git reset --hard HEAD: reset the current branch to the latest commit (HEAD) and discard all changes in the working directory and staging area.
+    Reset,
 }
 
 #[derive(Parser)]
@@ -84,5 +87,6 @@ fn main() {
             shell(&format!("git tag -d '{version}' && git push origin :refs/tags/{version}", version = cmd.version))
         }
         Command::Amend => shell("git add . && git commit --amend --no-edit && git push --force"),
+        Command::Reset => shell("git reset --hard HEAD"),
     }
 }
