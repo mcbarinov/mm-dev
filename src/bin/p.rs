@@ -32,12 +32,22 @@ enum Command {
     /// python3 -m venv .venv
     #[command(alias = "v")]
     Venv,
+
+    /// uv cache clean {package}
+    #[command(alias = "c")]
+    Cache(CacheCmd),
 }
 
 #[derive(Parser)]
 struct InstallCmd {
     /// Install packages. If empty, install from requirements.txt
     packages: Vec<String>,
+}
+
+#[derive(Parser)]
+struct CacheCmd {
+    /// Clean cache for a package
+    package: String,
 }
 
 fn main() {
@@ -69,6 +79,9 @@ fn main() {
                 exit(".venv exists already")
             }
             shell("uv venv");
+        }
+        Command::Cache(cmd) => {
+            shell(&format!("uv cache clean {}", cmd.package));
         }
     }
 }
