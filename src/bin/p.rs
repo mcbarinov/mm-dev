@@ -13,11 +13,11 @@ struct Cli {
 
 #[derive(clap::Subcommand)]
 enum Command {
-    /// pip list
+    /// uv pip list
     #[command(alias = "l")]
     List,
 
-    /// pip list -o
+    /// uv pip list --outdated
     #[command(alias = "o")]
     ListOutdated,
 
@@ -53,7 +53,7 @@ struct CacheCmd {
 fn main() {
     match Cli::parse().command {
         Command::List => shell("uv pip list"),
-        Command::ListOutdated => shell("pip3 list -o"),
+        Command::ListOutdated => shell("uv pip list --outdated"),
         Command::Install(cmd) => {
             if env::var_os("VIRTUAL_ENV").is_none() {
                 exit("venv is not activated")
