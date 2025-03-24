@@ -12,7 +12,7 @@ app = create_app(multi_command=True)
 
 @app.command(name="o", help="uv pip list --outdated")
 def pip_list_outdated() -> None:
-    run_command("uv pip list -o", capture_output=False)
+    run_command("uv pip list --outdated", capture_output=False)
 
 
 @app.command(name="l", help="uv pip list")
