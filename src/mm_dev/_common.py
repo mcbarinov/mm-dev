@@ -13,7 +13,7 @@ def version_callback(value: bool) -> None:
         raise Exit
 
 
-Version = Annotated[bool | None, typer.Option("--version", callback=version_callback)]
+Version = Annotated[bool | None, typer.Option("--version", callback=version_callback, help="Show the version and exit.")]
 
 
 def create_app(multi_command: bool = False) -> typer.Typer:

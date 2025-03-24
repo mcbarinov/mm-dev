@@ -5,7 +5,7 @@ from mm_dev._common import Version, create_app
 app = create_app()
 
 
-@app.command(help="Check my ip via httpbin.org/ip")
+@app.command(help="Check my ip via httpbin.org, ip-api.com")
 def main(_version: Version = None) -> None:
     res = hr("https://httpbin.org/ip")
     ip = res.json["origin"]
