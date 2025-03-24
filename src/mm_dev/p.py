@@ -64,5 +64,10 @@ def uninstall() -> None:
     run_command("pip freeze | xargs pip uninstall -y", capture_output=False)
 
 
+@app.command(name="c", help="uv cache clean {package}")
+def clean_cache(package: str) -> None:
+    run_command(f"uv cache clean {package}", capture_output=False)
+
+
 if __name__ == "__main__":
     app()
