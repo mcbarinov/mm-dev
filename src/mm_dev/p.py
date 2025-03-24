@@ -45,14 +45,14 @@ def install(packages: Optional[str] = Argument(None)) -> None:  # noqa: UP007
     run_command("pdm install", capture_output=False)
 
 
-@app.command(name="v", help="create or activate virtualenv")
+@app.command(name="v", help="create .venv")
 def venv() -> None:
     if os.getenv("VIRTUAL_ENV"):
         fatal("venv is activated already")
 
-    if not Path(".venv").exists():
-        run_command("python -m venv .venv", capture_output=False)
-        run_command(".venv/bin/pip install -U pip setuptools", capture_output=False)
+    if Path(".venv").exists():
+        fatal(".venv exists")
+    run_command("uv venv", capture_output=False)
 
 
 @app.command(name="d", help="uninstall all packages(+editable) from venv")
