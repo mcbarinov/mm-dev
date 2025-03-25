@@ -11,9 +11,9 @@ def diff() -> None:
     run_command("git diff", capture_output=False, echo_cmd_console=True)
 
 
-@app.command(name="l", help="""git log --pretty=format:"%ar / %an / %s""")
+@app.command(name="l", help="""git log --pretty=format:"%ar / %an / %s\"""")
 def log() -> None:
-    run_command("""git log --pretty=format:"%ar / %an / %s""", capture_output=False)
+    run_command("""git log --pretty=format:"%ar / %an / %s\"""", capture_output=False)
 
 
 @app.command(name="t", help="git tag --sort=-creatordate")
