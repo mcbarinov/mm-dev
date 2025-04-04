@@ -45,8 +45,8 @@ def uninstall() -> None:
     if not os.getenv("VIRTUAL_ENV"):
         fatal("venv is not activated")
 
-    run_command("uv pip list --format freeze -e | xargs uv pip uninstall -y", capture_output=False)
-    run_command("uv pip freeze | xargs pip uninstall", capture_output=False)
+    run_command("uv pip list --format freeze -e | xargs uv pip uninstall", capture_output=False)
+    run_command("uv pip freeze | xargs uv pip uninstall", capture_output=False)
 
 
 @app.command(name="c", help="uv cache clean {package}")
