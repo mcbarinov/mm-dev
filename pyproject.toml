@@ -9,7 +9,7 @@ dependencies = [
 ]
 [project.scripts]
 backup-projects-dir = "mm_dev.backup_projects_dir:app"
-check-proxy = "mm_dev.check_proxy:app"
+proxy-check = "mm_dev.proxy_check:app"
 dec2hex = "mm_dev.dec2hex:app"
 dh = "mm_dev.dh:app"
 g = "mm_dev.g:app"

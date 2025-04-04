@@ -2,8 +2,7 @@ import asyncio
 from typing import cast
 from urllib.parse import urlparse
 
-import anyio
-from mm_std import ahr, print_plain
+from mm_std import hra, print_plain
 
 from mm_dev._common import Version, create_app
 
@@ -12,7 +11,7 @@ app = create_app()
 
 @app.command(help="Check a proxy")
 def main(proxy_url: str, _version: Version = None) -> None:
-    anyio.run(_main, proxy_url)
+    asyncio.run(_main(proxy_url))
 
 
 if __name__ == "__main__":
@@ -28,7 +27,7 @@ async def _main(proxy_url: str) -> None:
 
 
 async def httpbin_check(proxy: str) -> str:
-    res = await ahr("https://httpbin.org/ip", proxy=proxy, timeout=5)
+    res = await hra("https://httpbin.org/ip", proxy=proxy, timeout=5)
     if res.error is not None:
         return res.error
     if isinstance(res.json, dict) and "origin" in res.json:
@@ -37,7 +36,7 @@ async def httpbin_check(proxy: str) -> str:
 
 
 async def ipify_check(proxy: str) -> str:
-    res = await ahr("https://api.ipify.org/?format=json", proxy=proxy, timeout=5)
+    res = await hra("https://api.ipify.org/?format=json", proxy=proxy, timeout=5)
     if res.error is not None:
         return res.error
     if isinstance(res.json, dict) and "ip" in res.json:
