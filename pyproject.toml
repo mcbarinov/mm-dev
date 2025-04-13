@@ -1,12 +1,12 @@
 [project]
 name = "mm-dev"
-version = "0.0.10"
+version = "0.0.11"
 description = ""
 requires-python = ">=3.12"
 dependencies = [
     "mm-std>=0.3.26",
     "packaging>=24.2",
-    "typer>=0.15.2",
+    "typer~=0.14.0",
 ]
 [project.scripts]
 backup-projects-dir = "mm_dev.backup_projects_dir:app"
@@ -26,7 +26,7 @@ build-backend = "hatchling.build"
 
 [tool.uv]
 dev-dependencies = [
-    "pytest~=8.3.5",
+    "pytest~=7.0.0",
     "pytest-xdist~=3.6.1",
     "ruff~=0.11.5",
     "pip-audit~=2.9.0",

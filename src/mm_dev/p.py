@@ -6,7 +6,7 @@ from typing import Optional
 
 import pydash
 import typer
-from mm_std import fatal, run_command
+from mm_std import fatal, print_table, run_command
 from packaging.requirements import Requirement
 from typer import Argument
 
@@ -82,16 +82,12 @@ def pip_list_outdated() -> None:
     outdated_pyproject_dev_deps = pyproject_deps.get_outdated_pyproject_packages(all_outdated_packages, dev=True)
 
     if outdated_pyproject_deps:
-        typer.echo("pyproject.toml outdated dependencies:")
-        for dep in outdated_pyproject_deps:
-            typer.echo(f"{dep.pyproject_version}\t{dep.installed_version}->{dep.new_version}")
+        rows = [[d.pyproject_version, d.installed_version, d.new_version] for d in outdated_pyproject_deps]
+        print_table("pyproject.toml, deps", ["pyproject", "installed", "new"], rows)
 
     if outdated_pyproject_dev_deps:
-        if outdated_pyproject_deps:
-            typer.echo("\n")
-        typer.echo("pyproject.toml outdated dev dependencies:")
-        for dep in outdated_pyproject_dev_deps:
-            typer.echo(f"{dep.pyproject_version}\t{dep.installed_version}->{dep.new_version}")
+        rows = [[d.pyproject_version, d.installed_version, d.new_version] for d in outdated_pyproject_dev_deps]
+        print_table("pyproject.toml, dev deps", ["pyproject", "installed", "new"], rows)
 
 
 @app.command(name="l", help="uv pip list")

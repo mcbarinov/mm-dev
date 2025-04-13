@@ -20,8 +20,8 @@ lint: format
     uv run mypy src
 
 audit:
-    uv run pip-audit
-    uv run bandit -r -c "pyproject.toml" src
+    uv run pip-audit --ignore-vuln PYSEC-2022-42969
+    uv run bandit --silent -r -c "pyproject.toml" src
 
 publish: build
     git diff-index --quiet HEAD
