@@ -1,8 +1,13 @@
 import os
+import tomllib
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
+import pydash
+import typer
 from mm_std import fatal, run_command
+from packaging.requirements import Requirement
 from typer import Argument
 
 from mm_dev._common import create_app
@@ -10,9 +15,83 @@ from mm_dev._common import create_app
 app = create_app(multi_command=True)
 
 
+@dataclass
+class OutdatedPackage:
+    package: str
+    installed_version: str
+    new_version: str
+    pyproject_version: Requirement | None = None
+
+
+@dataclass
+class ProjectDependencies:
+    dependencies: list[Requirement]
+    dev_dependencies: list[Requirement]
+
+    def get_outdated_pyproject_packages(self, all_outdated_packages: list[OutdatedPackage], dev: bool) -> list[OutdatedPackage]:
+        result = []
+        deps = self.dev_dependencies if dev else self.dependencies
+        for package in all_outdated_packages:
+            dep = pydash.find(deps, lambda p: p.name == package.package)  # noqa: B023
+            if dep:
+                package.pyproject_version = dep
+                result.append(package)
+
+        return result
+
+
+def parse_outdated_packages(value: str) -> list[OutdatedPackage]:
+    result = []
+    for line in value.splitlines():
+        if not line.strip():
+            continue
+        parts = line.split()
+        if len(parts) < 3:
+            continue
+        package = parts[0]
+        old_version = parts[1]
+        new_version = parts[2]
+        if package.startswith("--") or package == "Package":
+            continue
+        result.append(OutdatedPackage(package=package, installed_version=old_version, new_version=new_version))
+    return result
+
+
+def parse_pyproject_packages(pyproject_file: Path) -> ProjectDependencies:
+    with pyproject_file.open("rb") as f:
+        data = tomllib.load(f)
+
+    dependencies = [Requirement(d) for d in pydash.get(data, "project.dependencies", [])]
+    dev_dependencies = [Requirement(d) for d in pydash.get(data, "tool.uv.dev-dependencies", [])]
+    return ProjectDependencies(dependencies=dependencies, dev_dependencies=dev_dependencies)
+
+
 @app.command(name="o", help="uv pip list --outdated")
 def pip_list_outdated() -> None:
-    run_command("uv pip list --outdated", capture_output=False)
+    res = run_command("uv pip list --outdated")
+    typer.echo(res.stdout)
+
+    pyproject_file = Path("pyproject.toml")
+    if not pyproject_file.exists():
+        return
+
+    all_outdated_packages = parse_outdated_packages(res.stdout)
+    pyproject_deps = parse_pyproject_packages(pyproject_file)
+
+    outdated_pyproject_deps = pyproject_deps.get_outdated_pyproject_packages(all_outdated_packages, dev=False)
+    outdated_pyproject_dev_deps = pyproject_deps.get_outdated_pyproject_packages(all_outdated_packages, dev=True)
+
+    if outdated_pyproject_deps:
+        typer.echo("pyproject.toml outdated dependencies:")
+        for dep in outdated_pyproject_deps:
+            typer.echo(f"{dep.pyproject_version}\t{dep.installed_version}->{dep.new_version}")
+
+    if outdated_pyproject_dev_deps:
+        if outdated_pyproject_deps:
+            typer.echo("\n")
+        typer.echo("pyproject.toml outdated dev dependencies:")
+        for dep in outdated_pyproject_dev_deps:
+            typer.echo(f"{dep.pyproject_version}\t{dep.installed_version}->{dep.new_version}")
 
 
 @app.command(name="l", help="uv pip list")
