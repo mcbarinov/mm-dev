@@ -416,10 +416,11 @@ wheels = [
 
 [[package]]
 name = "mm-dev"
-version = "0.0.9"
+version = "0.0.10"
 source = { editable = "." }
 dependencies = [
     { name = "mm-std" },
+    { name = "packaging" },
     { name = "typer" },
 ]
 
@@ -436,6 +437,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "mm-std", specifier = ">=0.3.26" },
+    { name = "packaging", specifier = ">=24.2" },
     { name = "typer", specifier = ">=0.15.2" },
 ]
 
